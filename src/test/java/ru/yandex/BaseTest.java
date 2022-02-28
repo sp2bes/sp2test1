@@ -3,6 +3,7 @@ package ru.yandex;
 import com.jdiai.tools.Timer;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
+import site.User;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -54,6 +55,9 @@ public class BaseTest {
         return uniqPlaces;
     }
 
+    protected void login(User user) {
+        login(user.getLogin(), user.getPassword());
+    }
 
     @Step
     protected void login(String login, String password) {
