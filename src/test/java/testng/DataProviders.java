@@ -1,7 +1,7 @@
 package testng;
 
 import org.testng.annotations.DataProvider;
-import site.User;
+import site.models.User;
 import utils.FileUtils;
 
 import java.io.FileNotFoundException;

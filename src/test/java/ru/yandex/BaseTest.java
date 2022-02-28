@@ -1,9 +1,17 @@
 package ru.yandex;
 
+import com.epam.jdi.light.driver.WebDriverFactory;
 import com.jdiai.tools.Timer;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
-import site.User;
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import site.SiteYandex;
+import site.models.User;
 import utils.FileUtils;
 
 import java.io.FileNotFoundException;
@@ -11,11 +19,30 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import static com.epam.jdi.light.elements.init.PageFactory.initSite;
 import static site.SiteYandex.loginPage;
 import static site.SiteYandex.mapsPage;
 
 public class BaseTest {
+    WebDriver driver;
+    static volatile WebDriverManager wdm = null;
     String[] comments = null;
+
+    @BeforeClass(alwaysRun = true)
+    public void beforeTest() {
+        wdm = WebDriverManager.chromedriver()
+                .browserInDocker()
+                .dockerScreenResolution("1920x1080x24");
+        driver = wdm.create();
+        WebDriverFactory.useDriver((() -> driver));
+        initSite(SiteYandex.class);
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void afterTest() {
+        wdm.quit(driver);
+        WebDriverFactory.quit();
+    }
 
     protected void postComment(String url) throws FileNotFoundException {
         String[] comments = getComments();

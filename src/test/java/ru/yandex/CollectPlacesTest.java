@@ -1,5 +1,6 @@
 package ru.yandex;
 
+import com.epam.jdi.light.driver.WebDriverFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import testng.DataProviders;
@@ -20,7 +21,7 @@ public class CollectPlacesTest extends BaseTest implements TestsInit {
         urls.addAll(collectPlacesUrls(query, timeoutQuerySeconds, itemsCount));
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void after() {
         FileUtils.writeFileToDownloadsDir("placesUrls.txt", String.join("\n", urls));
     }

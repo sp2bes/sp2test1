@@ -1,4 +1,4 @@
-package site;
+package site.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;

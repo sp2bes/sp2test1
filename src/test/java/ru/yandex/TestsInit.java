@@ -1,27 +1,25 @@
 package ru.yandex;
 
+import com.epam.jdi.light.driver.WebDriverFactory;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Listeners;
-import site.SiteYandex;
 import testng.TestNGListener;
 
 import static com.epam.jdi.light.driver.WebDriverUtils.killAllSeleniumDrivers;
-import static com.epam.jdi.light.elements.composite.WebPage.openSite;
 import static com.epam.jdi.light.settings.WebSettings.logger;
 
 @Listeners(TestNGListener.class)
 public interface TestsInit {
     @BeforeSuite(alwaysRun = true)
-    static void setUp() {
+    static void setUpSuite() {
         killAllSeleniumDrivers();
-        openSite(SiteYandex.class);
         logger.info("Run Tests");
     }
 
     @AfterSuite(alwaysRun = true)
-    static void teardown() {
+    static void tearDownSuite() {
+        WebDriverFactory.quit();
         killAllSeleniumDrivers();
     }
 }

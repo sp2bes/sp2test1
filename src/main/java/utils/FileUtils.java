@@ -119,10 +119,7 @@ public class FileUtils {
         String s = "";
         waitForFileExist(filePath);
         try {
-
             s = IOUtils.toString(new FileInputStream(filePath), Charset.defaultCharset());
-            String name = Paths.get(filePath).toFile().getName();
-            Allure.addAttachment(name, s);
         } catch (IOException e) {
             e.printStackTrace();
             throw new FileNotFoundException(filePath + " file not exist, please check file path!");
@@ -187,12 +184,26 @@ public class FileUtils {
             ex.printStackTrace();
         }
     }
-    public static void writeFileToDownloadsDir(String toFileName, String content) {
+
+    public synchronized static void writeFileToDownloadsDir(String toFileName, String content) {
         Path path = Paths.get(downloadsDir, toFileName);
         try {
             Files.write(path, content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public synchronized static void writeNewFileToDownloadsDir(String toFileName, String content) {
+        Path path = Paths.get(downloadsDir, toFileName);
+        try {
+            Files.write(path, content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static boolean isFileExistOnDownloadsDir(String fileName) {
+        return Paths.get(downloadsDir, fileName).toFile().exists();
     }
 }
