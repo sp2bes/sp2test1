@@ -1,6 +1,5 @@
 package ru.yandex;
 
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import testng.DataProviders;
@@ -17,11 +16,12 @@ public class CollectPlacesTest extends BaseTest implements TestsInit {
     @Test(dataProviderClass = DataProviders.class, dataProvider = "data")
     public void collectToFileTest(String query) {
         int timeoutQuerySeconds = Integer.parseInt(getProperty("timeout.query.seconds"));
-        urls.addAll(collectPlacesUrls(query, timeoutQuerySeconds));
+        int itemsCount = Integer.parseInt(getProperty("default.items.count"));
+        urls.addAll(collectPlacesUrls(query, timeoutQuerySeconds, itemsCount));
     }
 
     @AfterMethod
     public void after() {
-        FileUtils.writeFileToDownloadsDir("placesUrls.txt",String.join("\n", urls));
+        FileUtils.writeFileToDownloadsDir("placesUrls.txt", String.join("\n", urls));
     }
 }

@@ -19,7 +19,9 @@ Yandex comments automation
   * src/test/resources/places.txt - add places type(e.g. shops, cafe ...) please see example file
   * src/test/resources/cities.txt - add cities (e.g. Moscow, Voronezh ...) please see example file
 * Go to the project root dir and run the next command from the terminal:
-  * `mvn clean test -Dsuite=collect -DtimeoutSeconds=600` timeoutSeconds - seconds to collect URLs for each "city place" query
+  * `mvn clean test -Dsuite=collect -DtimeoutSeconds=60 -Ddefault.items.count=20` 
+    * -DtimeoutSeconds - seconds to collect URLs for each "city place" query
+    * -Ddefault.items.count - count of most popular results for query
 
 ### To post comments
 * Update information in files:

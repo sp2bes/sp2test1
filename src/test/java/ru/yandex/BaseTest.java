@@ -23,7 +23,7 @@ public class BaseTest {
     }
 
     private String[] getComments() throws FileNotFoundException {
-        if (null == comments){
+        if (null == comments) {
             comments = FileUtils.readFileFromResources("comments.txt").split("\n");
         }
         return comments;
@@ -60,6 +60,11 @@ public class BaseTest {
 
     @Step
     protected Set<String> collectPlacesUrls(String query, int timeInSecondsToCollect) {
+        return collectPlacesUrls(query, timeInSecondsToCollect, 25);
+    }
+
+    @Step
+    protected Set<String> collectPlacesUrls(String query, int timeInSecondsToCollect, int itemsCount) {
         Set<String> uniqPlaces = new HashSet<>();
         mapsPage.open();
         mapsPage.search.shouldBe().displayed();
@@ -73,7 +78,7 @@ public class BaseTest {
             mapsPage.results.get(size).show();
             mapsPage.results.forEach(uiElement -> uniqPlaces.add(uiElement.getAttribute("href")));
             int sizeAfter = mapsPage.results.size();
-            return sizeAfter <= size;
+            return itemsCount < sizeAfter || sizeAfter <= size;
         });
         return uniqPlaces;
     }
