@@ -6,10 +6,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.*;
 import site.SiteYandex;
 import site.models.User;
 import utils.FileUtils;
@@ -19,6 +16,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import static com.epam.jdi.light.driver.WebDriverUtils.killAllSeleniumDrivers;
 import static com.epam.jdi.light.elements.init.PageFactory.initSite;
 import static site.SiteYandex.loginPage;
 import static site.SiteYandex.mapsPage;
@@ -42,6 +40,11 @@ public class BaseTest {
     public void afterTest() {
         wdm.quit(driver);
         WebDriverFactory.quit();
+    }
+
+    @AfterSuite(alwaysRun = true)
+    static void stopAll() {
+        wdm.quit();
     }
 
     protected void postComment(String url) throws FileNotFoundException {
