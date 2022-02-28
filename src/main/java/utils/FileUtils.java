@@ -190,7 +190,7 @@ public class FileUtils {
     public static void writeFileToDownloadsDir(String toFileName, String content) {
         Path path = Paths.get(downloadsDir, toFileName);
         try {
-            Files.write(path, content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(path, content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
         } catch (IOException ex) {
             ex.printStackTrace();
         }

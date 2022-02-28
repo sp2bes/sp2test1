@@ -15,6 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <aspectj.version>1.9.7</aspectj.version>
         <domain>https://yandex.ru/</domain>
+        <timeout.query.seconds>600</timeout.query.seconds>
         <allure.testng>2.17.2</allure.testng>
         <allure.maven>2.10.0</allure.maven>
         <jetty.version>9.4.12.RC2</jetty.version>

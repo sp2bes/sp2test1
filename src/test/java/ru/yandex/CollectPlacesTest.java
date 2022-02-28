@@ -1,6 +1,7 @@
 package ru.yandex;
 
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import testng.DataProviders;
 import utils.FileUtils;
@@ -13,11 +14,11 @@ public class CollectPlacesTest extends BaseTest implements TestsInit {
 
     @Test(dataProviderClass = DataProviders.class, dataProvider = "data")
     public void collectToFileTest(String query) {
-        urls.addAll(collectPlacesUrls(query, 600));
+        urls.addAll(collectPlacesUrls(query, timeoutQuerySeconds));
     }
 
-    @AfterClass
-    public void afterClass() {
+    @AfterMethod
+    public void after() {
         FileUtils.writeFileToDownloadsDir("placesUrls.txt",String.join("\n", urls));
     }
 }

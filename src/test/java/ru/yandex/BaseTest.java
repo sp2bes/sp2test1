@@ -8,10 +8,13 @@ import site.User;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.jdiai.tools.PropertyReader.getProperty;
 import static site.SiteYandex.loginPage;
 import static site.SiteYandex.mapsPage;
 
 public class BaseTest {
+    public static Integer timeoutQuerySeconds = Integer.parseInt(getProperty("timeout.query.seconds"));
+
     @Step
     protected void postComment(String url, String comment) {
         mapsPage.driver().get(url);
