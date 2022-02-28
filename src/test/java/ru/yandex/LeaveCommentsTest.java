@@ -1,6 +1,9 @@
 package ru.yandex;
 
+import com.epam.jdi.light.driver.WebDriverFactory;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import site.User;
 import testng.DataProviders;
@@ -18,15 +21,19 @@ public class LeaveCommentsTest extends BaseTest implements TestsInit {
         Collections.addAll(uniqPlaces, urls);
     }
 
-    @Test(dataProviderClass = DataProviders.class, dataProvider = "users")
-    public void yandexCommentsTest(User user) {
-        login(user);
-//        for (String placeHref : uniqPlaces) {
-//            postComment(placeHref, "Good place!");
-//        }
+    @AfterMethod
+    public void tearDown() {
+        WebDriverFactory.quit();
+    }
 
-        String debugUrl = uniqPlaces.stream().findFirst().get();
-        postComment(debugUrl, "Good place!");
+    @Test(dataProviderClass = DataProviders.class, dataProvider = "users")
+    public void yandexCommentsTest(User user) throws FileNotFoundException {
+        login(user);
+        postComment(uniqPlaces.stream().findFirst().get());
+//
+//        for (String placeHref : uniqPlaces) {
+//            postComment(placeHref);
+//        }
 
     }
 

@@ -30,7 +30,7 @@ public class DataProviders {
         return objects;
     }
 
-    @DataProvider(name = "users", parallel = true)
+    @DataProvider(name = "users")
     public Object[][] getUsers() throws IOException {
         List<User> users = User.getFromScv("users.csv");
         Object[][] objects = new Object[users.size()][1];

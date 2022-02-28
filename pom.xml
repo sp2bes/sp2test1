@@ -15,11 +15,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <aspectj.version>1.9.7</aspectj.version>
         <domain>https://yandex.ru/</domain>
-        <timeout.query.seconds>600</timeout.query.seconds>
+        <timeoutSeconds>600</timeoutSeconds>
         <allure.testng>2.17.2</allure.testng>
         <allure.maven>2.10.0</allure.maven>
         <jetty.version>9.4.12.RC2</jetty.version>
         <log4j2.version>2.17.1</log4j2.version>
+        <thread.count>2</thread.count>
+        <suite>collect</suite>
 
     </properties>
 
@@ -92,7 +94,7 @@
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
                     </systemPropertyVariables>
                     <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/general.xml</suiteXmlFile>
+                        <suiteXmlFile>src/test/resources/${suite}.xml</suiteXmlFile>
                     </suiteXmlFiles>
                     <testFailureIgnore>true</testFailureIgnore>
                     <argLine>
@@ -116,11 +118,13 @@
                 </configuration>
             </plugin>
         </plugins>
-
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <resources>
-            <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
-            </resource>
             <resource>
                 <directory>src/test/resources</directory>
                 <filtering>true</filtering>

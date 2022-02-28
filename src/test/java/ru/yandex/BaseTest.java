@@ -4,22 +4,42 @@ import com.jdiai.tools.Timer;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
 import site.User;
+import utils.FileUtils;
 
+import java.io.FileNotFoundException;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
-import static com.jdiai.tools.PropertyReader.getProperty;
 import static site.SiteYandex.loginPage;
 import static site.SiteYandex.mapsPage;
 
 public class BaseTest {
-    public static Integer timeoutQuerySeconds = Integer.parseInt(getProperty("timeout.query.seconds"));
+    String[] comments = null;
+
+    protected void postComment(String url) throws FileNotFoundException {
+        String[] comments = getComments();
+        postComment(url, getRandomComment(comments));
+    }
+
+    private String[] getComments() throws FileNotFoundException {
+        if (null == comments){
+            comments = FileUtils.readFileFromResources("comments.txt").split("\n");
+        }
+        return comments;
+    }
+
+    public static String getRandomComment(String[] comments) {
+        int rnd = new Random().nextInt(comments.length);
+        return comments[rnd];
+    }
 
     @Step
     protected void postComment(String url, String comment) {
         mapsPage.driver().get(url);
-        mapsPage.reviewSection.shouldBe().displayed();
+        mapsPage.reviewSection.shouldBe().displayed().enabled();
         mapsPage.reviewSection.show();
+        mapsPage.reviewSection.hover();
         mapsPage.reviewSection.rates.shouldBe().displayed();
 
         int size = mapsPage.reviewSection.rates.size();

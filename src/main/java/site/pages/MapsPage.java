@@ -10,7 +10,7 @@ import com.epam.jdi.light.ui.html.elements.common.TextField;
 import site.section.ReviewDialog;
 import site.section.ReviewSection;
 
-@Url("/maps/") @Title("Maps Search Page")
+@Url("/maps/")
 public class MapsPage extends WebPage {
 
     @Css(".search-form-view__input input")
