@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Collect URLs and Post comments" parallel="methods" data-provider-thread-count="2">
+    <test name="Collect places URLs" >
+        <classes>
+            <class name="ru.yandex.CollectPlacesTest"/>
+        </classes>
+    </test>
+<!--    <test name="Post comments" parallel="methods">-->
+<!--        <classes>-->
+<!--            <class name="ru.yandex.CollectPlacesTest"/>-->
+<!--        </classes>-->
+<!--    </test>-->
+    <listeners>
+        <listener class-name="testng.TestNGListener" />
+    </listeners>
+</suite>

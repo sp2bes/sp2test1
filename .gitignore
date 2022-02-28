@@ -1,0 +1,9 @@
+# Default ignored files
+*.iml
+.idea
+.idea/codeStyles/
+.logs/
+.allure/
+target/
+/logger.log
+/alure-results/
