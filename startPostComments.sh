@@ -1,1 +1,1 @@
-mvn clean install -Dsuite=post -Dthread.count=4 allure:serve
+mvn clean test -Dsuite=post -Dthread.count=2 allure:serve

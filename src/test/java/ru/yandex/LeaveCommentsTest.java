@@ -1,7 +1,9 @@
 package ru.yandex;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import com.epam.jdi.light.driver.WebDriverFactory;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.testng.annotations.*;
+import site.SiteYandex;
 import site.models.User;
 import testng.DataProviders;
 import utils.FileUtils;
@@ -11,8 +13,30 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.epam.jdi.light.elements.init.PageFactory.initSite;
+
 public class LeaveCommentsTest extends BaseTest implements TestsInit {
     static Set<String> uniqPlaces = new HashSet<>();
+
+
+    @BeforeMethod(alwaysRun = true)
+    public void beforeTest() {
+//        wdm = WebDriverManager.chromedriver()
+//                .browserInDocker()
+//                .dockerScreenResolution("1920x1080x24");
+        wdm = WebDriverManager.chromedriver();
+//                .browserInDocker()
+//                .dockerScreenResolution("1920x1080x24");
+        driver = wdm.create();
+        WebDriverFactory.useDriver((() -> driver));
+        initSite(SiteYandex.class);
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void afterTest() {
+        wdm.quit(driver);
+        WebDriverFactory.quit();
+    }
 
     @BeforeClass
     public static void beforeClass() throws FileNotFoundException {
@@ -23,6 +47,8 @@ public class LeaveCommentsTest extends BaseTest implements TestsInit {
     @Test(dataProviderClass = DataProviders.class, dataProvider = "users")
     public void yandexCommentsTest(User user) throws FileNotFoundException {
         login(user);
+//        postComment(uniqPlaces.stream().findFirst().get());
+
         for (String placeHref : uniqPlaces) {
             postComment(placeHref);
         }

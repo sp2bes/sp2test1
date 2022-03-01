@@ -1,16 +1,13 @@
 package ru.yandex;
 
-import com.epam.jdi.light.driver.WebDriverFactory;
+import com.epam.jdi.light.common.ElementArea;
 import com.jdiai.tools.Timer;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeClass;
-import site.SiteYandex;
 import site.models.User;
 import utils.FileUtils;
 
@@ -19,7 +16,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import static com.epam.jdi.light.elements.init.PageFactory.initSite;
 import static site.SiteYandex.loginPage;
 import static site.SiteYandex.mapsPage;
 
@@ -35,24 +31,9 @@ public class BaseTest {
 
     public static String getRandomComment(String[] comments) {
         int rnd = new Random().nextInt(comments.length);
-        return comments[rnd];
+        return comments[rnd].replace("\\n", "\n");
     }
 
-    @BeforeClass(alwaysRun = true)
-    public void beforeTest() {
-        wdm = WebDriverManager.chromedriver()
-                .browserInDocker()
-                .dockerScreenResolution("1920x1080x24");
-        driver = wdm.create();
-        WebDriverFactory.useDriver((() -> driver));
-        initSite(SiteYandex.class);
-    }
-
-    @AfterClass(alwaysRun = true)
-    public void afterTest() {
-        wdm.quit(driver);
-        WebDriverFactory.quit();
-    }
 
     protected void postComment(String url) throws FileNotFoundException {
         String[] comments = getComments();
@@ -69,20 +50,34 @@ public class BaseTest {
     @Step
     protected void postComment(String url, String comment) {
         mapsPage.driver().get(url);
-        mapsPage.reviewSection.shouldBe().displayed().enabled();
-        mapsPage.reviewSection.show();
-        mapsPage.reviewSection.hover();
-        mapsPage.reviewSection.rates.shouldBe().displayed();
+        mapsPage.reviewTab.shouldBe().displayed().enabled();
+        mapsPage.reviewTab.click();
 
-        int size = mapsPage.reviewSection.rates.size();
-        if (size < 1 && mapsPage.reviewSection.deleteRate.isDisplayed()) return; //skip comment if your review exists
+        Timer timer = new Timer(2000L);
+        boolean isRated = timer.wait(() -> mapsPage.deleteRate.isDisplayed());
 
-        mapsPage.reviewSection.rates.get(size - 1).click();
+        if (isRated) return; //skip comment if your review exists
+        mapsPage.rates.shouldBe().displayed().enabled();
+        mapsPage.rates.show();
+
+        int size = mapsPage.rates.size();
+        mapsPage.rates.get(size - 1).click(ElementArea.JS);
 
         mapsPage.reviewDialog.shouldBe().displayed();
         mapsPage.reviewDialog.rates.shouldBe().displayed();
         mapsPage.reviewDialog.comment.setValue(comment);
         mapsPage.reviewDialog.postButton.click();
+        try {
+            mapsPage.reviewDialog.postButton.click(ElementArea.JS);
+        } catch (Throwable ignore) {
+        }
+        try {
+            boolean displayed = mapsPage.reviewDialog.postButton.isDisplayed();
+            if (displayed)
+                mapsPage.reviewDialog.postButton.click(ElementArea.JS);
+        } catch (Throwable ignore) {
+        }
+
         mapsPage.reviewDialog.postButton.shouldBe().disappear();
     }
 
@@ -101,7 +96,7 @@ public class BaseTest {
         mapsPage.open();
         enterSearchQuery(query);
         scrollAndCollectURLs(timeInSecondsToCollect, itemsCount, uniqPlaces);
-        Allure.addAttachment(query.replace(" ","_").trim().toLowerCase()+".txt", String.join("\n", uniqPlaces));
+        Allure.addAttachment(query.replace(" ", "_").trim().toLowerCase() + ".txt", String.join("\n", uniqPlaces));
         return uniqPlaces;
     }
 
