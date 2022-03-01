@@ -2,7 +2,10 @@ package ru.yandex;
 
 import com.epam.jdi.light.driver.WebDriverFactory;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import site.SiteYandex;
 import site.models.User;
 import testng.DataProviders;
@@ -11,6 +14,7 @@ import utils.FileUtils;
 import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import static com.epam.jdi.light.elements.init.PageFactory.initSite;
@@ -19,11 +23,13 @@ import static com.jdiai.tools.PropertyReader.getProperty;
 public class LeaveCommentsTest extends BaseTest implements TestsInit {
     static Set<String> uniqPlaces = new HashSet<>();
 
-
     @BeforeMethod(alwaysRun = true)
-    public void beforeTest() {
+    public void beforeTest() throws InterruptedException {
+        int rnd = new Random().nextInt(10);
+        Thread.sleep(rnd * 1000);
+
         boolean dockerEnabled = Boolean.parseBoolean(getProperty("docker.enabled"));
-        if (dockerEnabled){
+        if (dockerEnabled) {
             wdm = WebDriverManager.chromedriver()
                     .browserInDocker()
                     .dockerScreenResolution("1920x1080x24");
@@ -55,7 +61,8 @@ public class LeaveCommentsTest extends BaseTest implements TestsInit {
         for (String placeHref : uniqPlaces) {
             try {
                 postComment(placeHref);
-            } catch (Throwable ignore){}
+            } catch (Throwable ignore) {
+            }
         }
 
     }

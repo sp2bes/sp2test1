@@ -130,6 +130,13 @@ public class BaseTest {
     protected void login(String login, String password) {
         loginPage.open();
         loginPage.loginInput.shouldBe().displayed();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        loginPage.loginInput.clear();
+        loginPage.loginInput.core().click();
         loginPage.loginInput.input(login);
         loginPage.loginButton.click();
         loginPage.password.shouldBe().displayed();
