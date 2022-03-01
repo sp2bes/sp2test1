@@ -14,19 +14,15 @@ import utils.FileUtils;
 
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.epam.jdi.light.elements.init.PageFactory.initSite;
 import static com.jdiai.tools.PropertyReader.getProperty;
 
-public class LeaveCommentsTest extends BaseTest implements TestsInit {
+public class LeaveCommentsNewTest extends BaseTest implements TestsInit {
     static Set<String> uniqPlaces = new HashSet<>();
 
     @BeforeMethod(alwaysRun = true)
     public void beforeTest() throws InterruptedException {
-        int rnd = new Random().nextInt(10);
-        Thread.sleep(rnd * 1000);
-
         boolean dockerEnabled = Boolean.parseBoolean(getProperty("docker.enabled"));
         if (dockerEnabled) {
             wdm = WebDriverManager.chromedriver()
@@ -53,22 +49,9 @@ public class LeaveCommentsTest extends BaseTest implements TestsInit {
         Collections.addAll(uniqPlaces, urls);
     }
 
-    @Test(dataProviderClass = DataProviders.class, dataProvider = "users")
-    public void yandexCommentsTest(User user) {
-        login(user);
-
-        for (String placeHref : uniqPlaces) {
-            try {
-                postComment(placeHref);
-            } catch (Throwable ignore) {
-            }
-        }
-
-    }
-
     @Test
     public void yandexCommentsTest() throws FileNotFoundException {
-        User user = new User("romatrusov2", "rASSiaVperde123");
+        User user = new User("alexey.kuznecovv", "alex2022");
         login(user);
 
         for (String placeHref : uniqPlaces) {
@@ -79,24 +62,22 @@ public class LeaveCommentsTest extends BaseTest implements TestsInit {
 
     @Test
     public void yandexComments1Test() throws FileNotFoundException {
-        User user = new User("seregeivesely", "Sv01234@Sv");
+        User user = new User("va.coschkin", "VaK===o0op&D");
         login(user);
 
         for (String placeHref : uniqPlaces) {
             postComment(placeHref);
         }
-
     }
 
     @Test
     public void yandexComments2Test() throws FileNotFoundException {
-        User user = new User("ivanhuyarin", "IvH12345@54321HiV");
+        User user = new User("seregeivesely", "Sv01234@Sv");
         login(user);
         List<String> reversed = Lists.reverse(new ArrayList<>(uniqPlaces));
         for (String placeHref : reversed) {
             postComment(placeHref);
         }
-
     }
 
 }

@@ -14,19 +14,15 @@ import utils.FileUtils;
 
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.epam.jdi.light.elements.init.PageFactory.initSite;
 import static com.jdiai.tools.PropertyReader.getProperty;
 
-public class LeaveCommentsTest extends BaseTest implements TestsInit {
+public class LeaveComments2Test extends BaseTest implements TestsInit {
     static Set<String> uniqPlaces = new HashSet<>();
 
     @BeforeMethod(alwaysRun = true)
-    public void beforeTest() throws InterruptedException {
-        int rnd = new Random().nextInt(10);
-        Thread.sleep(rnd * 1000);
-
+    public void beforeTest() {
         boolean dockerEnabled = Boolean.parseBoolean(getProperty("docker.enabled"));
         if (dockerEnabled) {
             wdm = WebDriverManager.chromedriver()
@@ -90,7 +86,7 @@ public class LeaveCommentsTest extends BaseTest implements TestsInit {
 
     @Test
     public void yandexComments2Test() throws FileNotFoundException {
-        User user = new User("ivanhuyarin", "IvH12345@54321HiV");
+        User user = new User("romatrusov2", "rASSiaVperde123");
         login(user);
         List<String> reversed = Lists.reverse(new ArrayList<>(uniqPlaces));
         for (String placeHref : reversed) {

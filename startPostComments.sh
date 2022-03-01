@@ -1,1 +1,1 @@
-mvn clean test -Dsuite=post -Dthread.count=4 -Ddocker.enabled=True -Dusers.file=users1.csv allure:serve
+mvn test -Dsuite=post1 -Dthread.count=3 -Ddocker.enabled=True -Dusers.file=users2.csv allure:serve

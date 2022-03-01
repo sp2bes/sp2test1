@@ -5,6 +5,7 @@ import com.jdiai.tools.Timer;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
+import org.hamcrest.Matchers;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterSuite;
@@ -49,7 +50,16 @@ public class BaseTest {
     @Step
     protected void postComment(String url, String comment) {
         mapsPage.driver().get(url);
-        mapsPage.reviewTab.shouldBe().displayed().enabled();
+        try {
+            mapsPage.reviewTab.shouldBe().displayed().enabled();
+        } catch (Throwable ignore){
+            try {
+            mapsPage.driver().get(url);
+            mapsPage.reviewTab.shouldBe().displayed().enabled();
+            } catch (Throwable e){
+                return;
+            }
+        }
         mapsPage.reviewTab.click();
 
         Timer timer = new Timer(4000L);
@@ -65,19 +75,16 @@ public class BaseTest {
         mapsPage.reviewDialog.shouldBe().displayed();
         mapsPage.reviewDialog.rates.shouldBe().displayed();
         mapsPage.reviewDialog.comment.setValue(comment);
+        String text = mapsPage.reviewDialog.postButton.getText();
         mapsPage.reviewDialog.postButton.click();
         try {
             mapsPage.reviewDialog.postButton.click(ElementArea.JS);
         } catch (Throwable ignore) {
         }
-        try {
-            boolean displayed = mapsPage.reviewDialog.postButton.isDisplayed();
-            if (displayed)
-                mapsPage.reviewDialog.postButton.click(ElementArea.JS);
-        } catch (Throwable ignore) {
-        }
 
-        mapsPage.reviewDialog.postButton.shouldBe().disappear();
+        if (mapsPage.reviewDialog.postButton.isExist()){
+            mapsPage.reviewDialog.postButton.shouldBe().text(Matchers.not(text));
+        }
     }
 
     protected Set<String> collectPlacesUrls(String city, String placeType, int timeInSecondsToCollect) {
@@ -153,7 +160,7 @@ public class BaseTest {
             try {
                 loginPage.phoneSkip.click(ElementArea.JS);
                 loginPage.phoneSkip.shouldBe().disappear();
-            }catch (Throwable ignore){
+            } catch (Throwable ignore) {
 
             }
 
