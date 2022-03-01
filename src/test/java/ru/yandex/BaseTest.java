@@ -101,7 +101,7 @@ public class BaseTest {
         mapsPage.open();
         enterSearchQuery(query);
         scrollAndCollectURLs(timeInSecondsToCollect, itemsCount, uniqPlaces);
-        Allure.addAttachment(query.replace(" ","").trim()+".txt", String.join("\n", uniqPlaces));
+        Allure.addAttachment(query.replace(" ","_").trim().toLowerCase()+".txt", String.join("\n", uniqPlaces));
         return uniqPlaces;
     }
 
