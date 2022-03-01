@@ -1,9 +1,17 @@
 package ru.yandex;
 
+import com.epam.jdi.light.driver.WebDriverFactory;
 import com.jdiai.tools.Timer;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
-import site.User;
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeClass;
+import site.SiteYandex;
+import site.models.User;
 import utils.FileUtils;
 
 import java.io.FileNotFoundException;
@@ -11,11 +19,40 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import static com.epam.jdi.light.elements.init.PageFactory.initSite;
 import static site.SiteYandex.loginPage;
 import static site.SiteYandex.mapsPage;
 
 public class BaseTest {
+    static volatile WebDriverManager wdm = null;
+    WebDriver driver;
     String[] comments = null;
+
+    @AfterSuite(alwaysRun = true)
+    static void stopAll() {
+        wdm.quit();
+    }
+
+    public static String getRandomComment(String[] comments) {
+        int rnd = new Random().nextInt(comments.length);
+        return comments[rnd];
+    }
+
+    @BeforeClass(alwaysRun = true)
+    public void beforeTest() {
+        wdm = WebDriverManager.chromedriver()
+                .browserInDocker()
+                .dockerScreenResolution("1920x1080x24");
+        driver = wdm.create();
+        WebDriverFactory.useDriver((() -> driver));
+        initSite(SiteYandex.class);
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void afterTest() {
+        wdm.quit(driver);
+        WebDriverFactory.quit();
+    }
 
     protected void postComment(String url) throws FileNotFoundException {
         String[] comments = getComments();
@@ -27,11 +64,6 @@ public class BaseTest {
             comments = FileUtils.readFileFromResources("comments.txt").split("\n");
         }
         return comments;
-    }
-
-    public static String getRandomComment(String[] comments) {
-        int rnd = new Random().nextInt(comments.length);
-        return comments[rnd];
     }
 
     @Step
@@ -67,11 +99,17 @@ public class BaseTest {
     protected Set<String> collectPlacesUrls(String query, int timeInSecondsToCollect, int itemsCount) {
         Set<String> uniqPlaces = new HashSet<>();
         mapsPage.open();
-        mapsPage.search.shouldBe().displayed();
-        mapsPage.search.input(query + Keys.ENTER);
+        enterSearchQuery(query);
+        scrollAndCollectURLs(timeInSecondsToCollect, itemsCount, uniqPlaces);
+        Allure.addAttachment(query.replace(" ","_").trim().toLowerCase()+".txt", String.join("\n", uniqPlaces));
+        return uniqPlaces;
+    }
+
+    @Step("Scroll results and collect URLs")
+    private void scrollAndCollectURLs(int timeInSecondsToCollect, int itemsCount, Set<String> uniqPlaces) {
         mapsPage.results.clear();
         mapsPage.results.shouldBe().displayed();
-        Timer timer = new Timer(timeInSecondsToCollect * 1000);
+        Timer timer = new Timer(timeInSecondsToCollect * 1000L);
         timer.wait(() -> {
             int size = mapsPage.results.size();
             mapsPage.results.get(size).hover();
@@ -80,7 +118,14 @@ public class BaseTest {
             int sizeAfter = mapsPage.results.size();
             return itemsCount < sizeAfter || sizeAfter <= size;
         });
-        return uniqPlaces;
+    }
+
+    @Step
+    private void enterSearchQuery(String query) {
+        mapsPage.search.shouldBe().displayed();
+        mapsPage.search.core().click();
+        mapsPage.search.clear();
+        mapsPage.search.input(query + Keys.ENTER);
     }
 
     protected void login(User user) {

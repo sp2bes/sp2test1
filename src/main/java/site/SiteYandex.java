@@ -1,6 +1,5 @@
 package site;
 
-import com.epam.jdi.light.elements.pageobjects.annotations.JSite;
 import site.pages.LoginPage;
 import site.pages.MapsPage;
 

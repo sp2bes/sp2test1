@@ -1,4 +1,5 @@
 package testng;
+
 import com.jdiai.tools.Safe;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
@@ -15,14 +16,15 @@ import static com.epam.jdi.light.settings.WebSettings.logger;
 import static com.jdiai.tools.LinqUtils.last;
 import static java.lang.System.currentTimeMillis;
 
-public class TestNGListener implements IInvokedMethodListener {    private Safe<Long> start = new Safe<>(0L);
+public class TestNGListener implements IInvokedMethodListener {
+    private Safe<Long> start = new Safe<>(0L);
 
     @Override
     public void beforeInvocation(IInvokedMethod m, ITestResult tr) {
         if (m.isTestMethod()) {
             ITestNGMethod testMethod = m.getTestMethod();
             if (testMethod.getConstructorOrMethod().getMethod().isAnnotationPresent(Test.class)) {
-                TEST_NAME.set( last(testMethod.getTestClass().getName().split("\\.")) +
+                TEST_NAME.set(last(testMethod.getTestClass().getName().split("\\.")) +
                         "." + testMethod.getMethodName());
                 start.set(currentTimeMillis());
                 logger.step("== Test '%s' START ==", TEST_NAME.get());
@@ -40,7 +42,8 @@ public class TestNGListener implements IInvokedMethodListener {    private Safe<
             if ("FAILED".equals(result)) {
                 try {
                     screenshotStep("On Fail Screenshot");
-                } catch (RuntimeException ignored) { }
+                } catch (RuntimeException ignored) {
+                }
                 if (tr.getThrowable() != null) {
                     logger.step("ERROR: " + tr.getThrowable().getMessage());
                 } else {

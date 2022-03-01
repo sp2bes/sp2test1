@@ -20,7 +20,7 @@ public class CollectPlacesTest extends BaseTest implements TestsInit {
         urls.addAll(collectPlacesUrls(query, timeoutQuerySeconds, itemsCount));
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void after() {
         FileUtils.writeFileToDownloadsDir("placesUrls.txt", String.join("\n", urls));
     }
