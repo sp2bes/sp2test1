@@ -53,7 +53,7 @@ public class BaseTest {
         mapsPage.reviewTab.shouldBe().displayed().enabled();
         mapsPage.reviewTab.click();
 
-        Timer timer = new Timer(2000L);
+        Timer timer = new Timer(4000L);
         boolean isRated = timer.wait(() -> mapsPage.deleteRate.isDisplayed());
 
         if (isRated) return; //skip comment if your review exists
