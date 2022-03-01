@@ -19,6 +19,13 @@ public class CleanUpUrlsTest {
         FileUtils.writeNewFileToDownloadsDir("placesUrlsUnique.txt", finalText);
     }
 
+    @Test
+    public void filterMainFileToHaveUniqueValues() throws FileNotFoundException {
+        Set<String> uniqueValues = getUniqueLinesOnly("placesUrls.txt");
+        String finalText = String.join("\n", uniqueValues);
+        FileUtils.writeNewFileToDownloadsDir("placesUrls.txt", finalText);
+    }
+
     private Set<String> getUniqueLinesOnly(String fileName) throws FileNotFoundException {
         String text = FileUtils.readFileFromDownloads(fileName);
         String[] split = text.split("\n");

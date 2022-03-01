@@ -3,6 +3,7 @@ package ru.yandex;
 import com.epam.jdi.light.driver.WebDriverFactory;
 import com.jdiai.tools.Timer;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -98,10 +99,14 @@ public class BaseTest {
     protected Set<String> collectPlacesUrls(String query, int timeInSecondsToCollect, int itemsCount) {
         Set<String> uniqPlaces = new HashSet<>();
         mapsPage.open();
-        mapsPage.search.shouldBe().displayed();
-        mapsPage.search.core().click();
-        mapsPage.search.clear();
-        mapsPage.search.input(query + Keys.ENTER);
+        enterSearchQuery(query);
+        scrollAndCollectURLs(timeInSecondsToCollect, itemsCount, uniqPlaces);
+        Allure.addAttachment(query.replace(" ","").trim()+".txt", String.join("\n", uniqPlaces));
+        return uniqPlaces;
+    }
+
+    @Step("Scroll results and collect URLs")
+    private void scrollAndCollectURLs(int timeInSecondsToCollect, int itemsCount, Set<String> uniqPlaces) {
         mapsPage.results.clear();
         mapsPage.results.shouldBe().displayed();
         Timer timer = new Timer(timeInSecondsToCollect * 1000L);
@@ -113,7 +118,14 @@ public class BaseTest {
             int sizeAfter = mapsPage.results.size();
             return itemsCount < sizeAfter || sizeAfter <= size;
         });
-        return uniqPlaces;
+    }
+
+    @Step
+    private void enterSearchQuery(String query) {
+        mapsPage.search.shouldBe().displayed();
+        mapsPage.search.core().click();
+        mapsPage.search.clear();
+        mapsPage.search.input(query + Keys.ENTER);
     }
 
     protected void login(User user) {
