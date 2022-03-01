@@ -49,7 +49,7 @@ public class LeaveCommentsTest extends BaseTest implements TestsInit {
     }
 
     @Test(dataProviderClass = DataProviders.class, dataProvider = "users")
-    public void yandexCommentsTest(User user) throws FileNotFoundException {
+    public void yandexCommentsTest(User user) {
         login(user);
 
         for (String placeHref : uniqPlaces) {

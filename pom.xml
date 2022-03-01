@@ -24,6 +24,7 @@
         <thread.count>2</thread.count>
         <suite>collect</suite>
         <docker.enabled>True</docker.enabled>
+        <users.file>users1.csv</users.file>
 
     </properties>
 

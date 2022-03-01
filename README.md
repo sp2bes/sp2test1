@@ -28,10 +28,11 @@ Yandex maps comments automation
     * **src/test/resources/places.txt** - add places type(e.g. shops, cafe ...) please see example file
     * **src/test/resources/cities.txt** - add cities (e.g. Moscow, Voronezh ...) please see example file
 * Go to the project root dir and run the next command from the terminal:
-    * `mvn clean test -Dsuite=collect -DtimeoutSeconds=60 -Ddefault.items.count=20 -Dthread.count=4`
+    * `mvn clean test -Dsuite=collect -DtimeoutSeconds=60 -Ddefault.items.count=20 -Dthread.count=4 -Ddocker.enabled=True`
         * `-DtimeoutSeconds` - seconds to collect URLs for each "city place" query
         * `-Ddefault.items.count` - count of most popular results for query
         * `-Dthread.count=4` - number of threads(if you have power PC or Laptop select 3-6, if not 1-3)
+        * `-Ddocker.enabled=True` - run using docker or not(True or False)
 
 ### To post comments
 
@@ -43,12 +44,13 @@ Yandex maps comments automation
 
 Go to the project root dir and run the next command from the terminal:
 
-`mvn clean test -Dsuite=post -Dthread.count=2 allure:serve`
+`mvn clean test -Dsuite=post -Dthread.count=4 -Ddocker.enabled=True -Dusers.file=users1.csv allure:serve`
 
 * `-Dthread.count=4` - number of threads - one thread for 1 user(if you have power PC or Laptop select 3-6, if not 1-3)
-* `allure:serve` - generate report and open in browser. Can be replaced to `allure:report` -> you can open
+* `-Ddocker.enabled=True` - run using docker or not(True or False)
+* `-Dusers.file=users1.csv` - chose users file name from the resources
+* `allure:serve` - (optional) generate report and open in browser. Can be replaced to `allure:report` -> you can open
   target/allure-report/index.html using chrome browser
-
 or
 
 `sh startPostComments.sh`

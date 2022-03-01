@@ -34,7 +34,6 @@ public class BaseTest {
         return comments[rnd].replace("\\n", "\n");
     }
 
-
     protected void postComment(String url) throws FileNotFoundException {
         String[] comments = getComments();
         postComment(url, getRandomComment(comments));

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jdiai.tools.PropertyReader.getProperty;
+
 public class DataProviders {
     @DataProvider(name = "data", parallel = true)
     public Object[][] getData() throws FileNotFoundException {
@@ -32,7 +34,8 @@ public class DataProviders {
 
     @DataProvider(name = "users")
     public Object[][] getUsers() throws IOException {
-        List<User> users = User.getFromScv("users.csv");
+        String usersFile = getProperty("users.file");
+        List<User> users = User.getFromScv(usersFile);
         Object[][] objects = new Object[users.size()][1];
         for (int i = 0; i < users.size(); i++) {
             User value = users.get(i);
