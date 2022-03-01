@@ -23,6 +23,7 @@
         <log4j2.version>2.17.1</log4j2.version>
         <thread.count>2</thread.count>
         <suite>collect</suite>
+        <docker.enabled>True</docker.enabled>
 
     </properties>
 

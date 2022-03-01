@@ -22,9 +22,13 @@ public class CollectPlacesTest extends BaseTest implements TestsInit {
 
     @BeforeClass(alwaysRun = true)
     public void beforeTest() {
-        wdm = WebDriverManager.chromedriver()
-                .browserInDocker()
-                .dockerScreenResolution("1920x1080x24");
+        if (Boolean.parseBoolean(getProperty("docker.enabled"))){
+            wdm = WebDriverManager.chromedriver()
+                    .browserInDocker()
+                    .dockerScreenResolution("1920x1080x24");
+        } else {
+            wdm = WebDriverManager.chromedriver();
+        }
         driver = wdm.create();
         WebDriverFactory.useDriver((() -> driver));
         initSite(SiteYandex.class);

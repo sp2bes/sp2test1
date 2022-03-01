@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.epam.jdi.light.elements.init.PageFactory.initSite;
+import static com.jdiai.tools.PropertyReader.getProperty;
 
 public class LeaveCommentsTest extends BaseTest implements TestsInit {
     static Set<String> uniqPlaces = new HashSet<>();
@@ -21,12 +22,15 @@ public class LeaveCommentsTest extends BaseTest implements TestsInit {
 
     @BeforeMethod(alwaysRun = true)
     public void beforeTest() {
-//        wdm = WebDriverManager.chromedriver()
-//                .browserInDocker()
-//                .dockerScreenResolution("1920x1080x24");
-        wdm = WebDriverManager.chromedriver();
-//                .browserInDocker()
-//                .dockerScreenResolution("1920x1080x24");
+        boolean dockerEnabled = Boolean.parseBoolean(getProperty("docker.enabled"));
+        if (dockerEnabled){
+            wdm = WebDriverManager.chromedriver()
+                    .browserInDocker()
+                    .dockerScreenResolution("1920x1080x24");
+        } else {
+            wdm = WebDriverManager.chromedriver();
+        }
+
         driver = wdm.create();
         WebDriverFactory.useDriver((() -> driver));
         initSite(SiteYandex.class);

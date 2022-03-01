@@ -1,1 +1,1 @@
-mvn clean test -Dsuite=post -Dthread.count=2 allure:serve
+mvn clean test -Dsuite=post -Dthread.count=3 -Ddocker.enabled=True allure:serve
