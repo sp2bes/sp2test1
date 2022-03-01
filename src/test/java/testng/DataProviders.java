@@ -32,7 +32,7 @@ public class DataProviders {
         return objects;
     }
 
-    @DataProvider(name = "users")
+    @DataProvider(name = "users", parallel = true)
     public Object[][] getUsers() throws IOException {
         String usersFile = getProperty("users.file");
         List<User> users = User.getFromScv(usersFile);
