@@ -129,6 +129,7 @@ public class BaseTest {
     @Step
     protected void login(String login, String password) {
         loginPage.open();
+        loginPage.loginInput.shouldBe().displayed();
         loginPage.loginInput.input(login);
         loginPage.loginButton.click();
         loginPage.password.shouldBe().displayed();
@@ -136,10 +137,19 @@ public class BaseTest {
         loginPage.loginButton.click();
         loginPage.password.shouldBe().disappear();
 
-        if (loginPage.phoneSkip.isExist()) {
-            loginPage.phoneSkip.shouldBe().displayed();
-            loginPage.phoneSkip.click();
-            loginPage.phoneSkip.shouldBe().disappear();
+        Timer timer = new Timer(2000L);
+        boolean needSkipPhone = timer.wait(() -> {
+            loginPage.phoneSkip.isDisplayed();
+        });
+
+        if (needSkipPhone) {
+            try {
+                loginPage.phoneSkip.click(ElementArea.JS);
+                loginPage.phoneSkip.shouldBe().disappear();
+            }catch (Throwable ignore){
+
+            }
+
         }
     }
 }

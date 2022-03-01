@@ -44,6 +44,15 @@ public class User {
                 });
     }
 
+    public static void toCsv(String dataFile, List<User> users) throws IOException {
+        Path path = Paths.get(RESOURCES_PATH,  dataFile);
+        CsvMapper csvMapper = new CsvMapper();
+        CsvSchema schema = csvMapper.schemaFor(User.class).withHeader().withoutQuoteChar();
+        csvMapper.writer(schema)
+                .writeValue(path.toFile(), users);
+
+    }
+
     @Override
     public String toString() {
         return "User{" +
