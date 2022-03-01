@@ -7,7 +7,9 @@ import testng.DataProviders;
 import utils.FileUtils;
 
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class LeaveCommentsTest extends BaseTest implements TestsInit {
     static Set<String> uniqPlaces = new HashSet<>();

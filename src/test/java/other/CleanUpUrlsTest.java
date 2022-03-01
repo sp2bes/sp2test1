@@ -12,7 +12,7 @@ public class CleanUpUrlsTest {
     @Test
     public void filterFileToHaveUniqueValues() throws FileNotFoundException {
         Set<String> uniqueValues = getUniqueLinesOnly("placesUrls.txt");
-        if (FileUtils.isFileExistOnDownloadsDir("placesUrlsUnique.txt")){
+        if (FileUtils.isFileExistOnDownloadsDir("placesUrlsUnique.txt")) {
             uniqueValues.addAll(getUniqueLinesOnly("placesUrlsUnique.txt"));
         }
         String finalText = String.join("\n", uniqueValues);

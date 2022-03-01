@@ -1,7 +1,6 @@
 package utils;
 
 import com.jdiai.tools.Timer;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Attachment;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;

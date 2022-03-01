@@ -6,7 +6,9 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeClass;
 import site.SiteYandex;
 import site.models.User;
 import utils.FileUtils;
@@ -16,15 +18,24 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import static com.epam.jdi.light.driver.WebDriverUtils.killAllSeleniumDrivers;
 import static com.epam.jdi.light.elements.init.PageFactory.initSite;
 import static site.SiteYandex.loginPage;
 import static site.SiteYandex.mapsPage;
 
 public class BaseTest {
-    WebDriver driver;
     static volatile WebDriverManager wdm = null;
+    WebDriver driver;
     String[] comments = null;
+
+    @AfterSuite(alwaysRun = true)
+    static void stopAll() {
+        wdm.quit();
+    }
+
+    public static String getRandomComment(String[] comments) {
+        int rnd = new Random().nextInt(comments.length);
+        return comments[rnd];
+    }
 
     @BeforeClass(alwaysRun = true)
     public void beforeTest() {
@@ -42,11 +53,6 @@ public class BaseTest {
         WebDriverFactory.quit();
     }
 
-    @AfterSuite(alwaysRun = true)
-    static void stopAll() {
-        wdm.quit();
-    }
-
     protected void postComment(String url) throws FileNotFoundException {
         String[] comments = getComments();
         postComment(url, getRandomComment(comments));
@@ -57,11 +63,6 @@ public class BaseTest {
             comments = FileUtils.readFileFromResources("comments.txt").split("\n");
         }
         return comments;
-    }
-
-    public static String getRandomComment(String[] comments) {
-        int rnd = new Random().nextInt(comments.length);
-        return comments[rnd];
     }
 
     @Step
@@ -98,10 +99,12 @@ public class BaseTest {
         Set<String> uniqPlaces = new HashSet<>();
         mapsPage.open();
         mapsPage.search.shouldBe().displayed();
+        mapsPage.search.core().click();
+        mapsPage.search.clear();
         mapsPage.search.input(query + Keys.ENTER);
         mapsPage.results.clear();
         mapsPage.results.shouldBe().displayed();
-        Timer timer = new Timer(timeInSecondsToCollect * 1000);
+        Timer timer = new Timer(timeInSecondsToCollect * 1000L);
         timer.wait(() -> {
             int size = mapsPage.results.size();
             mapsPage.results.get(size).hover();

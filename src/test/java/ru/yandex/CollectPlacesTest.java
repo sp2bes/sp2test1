@@ -1,6 +1,5 @@
 package ru.yandex;
 
-import com.epam.jdi.light.driver.WebDriverFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import testng.DataProviders;

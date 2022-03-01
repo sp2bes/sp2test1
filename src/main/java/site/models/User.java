@@ -29,6 +29,21 @@ public class User {
         this.password = password;
     }
 
+    public static List<User> getFromScv(String dataFile) throws IOException {
+        Path path = Paths.get(RESOURCES_PATH, dataFile);
+
+        CsvSchema orderLineSchema = CsvSchema.emptySchema().withHeader();
+        CsvMapper csvMapper = new CsvMapper();
+        MappingIterator<User> orders = csvMapper.readerFor(User.class)
+                .with(orderLineSchema)
+                .readValues(path.toFile());
+
+        return new ObjectMapper()
+                .configure(SerializationFeature.INDENT_OUTPUT, true)
+                .convertValue(orders.readAll(), new TypeReference<List<User>>() {
+                });
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -43,20 +58,5 @@ public class User {
 
     public String getPassword() {
         return password;
-    }
-
-    public static List<User> getFromScv(String dataFile) throws IOException {
-        Path path = Paths.get(RESOURCES_PATH,  dataFile);
-
-        CsvSchema orderLineSchema = CsvSchema.emptySchema().withHeader();
-        CsvMapper csvMapper = new CsvMapper();
-        MappingIterator<User> orders = csvMapper.readerFor(User.class)
-                .with(orderLineSchema)
-                .readValues(path.toFile());
-
-        return new ObjectMapper()
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
-                .convertValue(orders.readAll(), new TypeReference<List<User>>() {
-                });
     }
 }
