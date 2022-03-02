@@ -1,6 +1,7 @@
 package ru.yandex;
 
 import com.epam.jdi.light.common.ElementArea;
+import com.epam.jdi.light.elements.composite.WebPage;
 import com.jdiai.tools.Timer;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Allure;
@@ -8,8 +9,11 @@ import io.qameta.allure.Step;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
+import site.SiteYandex;
 import site.models.User;
+import site.pages.LoginPage;
 import utils.FileUtils;
 
 import java.io.FileNotFoundException;
@@ -17,17 +21,24 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import static com.epam.jdi.light.elements.init.PageFactory.initElements;
+import static com.epam.jdi.light.elements.init.PageFactory.initSite;
+import static com.jdiai.tools.PropertyReader.getProperty;
 import static site.SiteYandex.loginPage;
 import static site.SiteYandex.mapsPage;
 
 public class BaseTest {
     static volatile WebDriverManager wdm = null;
+    static boolean dockerEnabled = Boolean.parseBoolean(getProperty("docker.enabled"));
+
     WebDriver driver;
     String[] comments = null;
 
     @AfterSuite(alwaysRun = true)
     static void stopAll() {
-        wdm.quit();
+        if (dockerEnabled) {
+            wdm.quit();
+        }
     }
 
     public static String getRandomComment(String[] comments) {
@@ -52,11 +63,11 @@ public class BaseTest {
         mapsPage.driver().get(url);
         try {
             mapsPage.reviewTab.shouldBe().displayed().enabled();
-        } catch (Throwable ignore){
+        } catch (Throwable ignore) {
             try {
-            mapsPage.driver().get(url);
-            mapsPage.reviewTab.shouldBe().displayed().enabled();
-            } catch (Throwable e){
+                mapsPage.driver().get(url);
+                mapsPage.reviewTab.shouldBe().displayed().enabled();
+            } catch (Throwable e) {
                 return;
             }
         }
@@ -75,15 +86,10 @@ public class BaseTest {
         mapsPage.reviewDialog.shouldBe().displayed();
         mapsPage.reviewDialog.rates.shouldBe().displayed();
         mapsPage.reviewDialog.comment.setValue(comment);
-        String text = mapsPage.reviewDialog.postButton.getText();
         mapsPage.reviewDialog.postButton.click();
         try {
             mapsPage.reviewDialog.postButton.click(ElementArea.JS);
         } catch (Throwable ignore) {
-        }
-
-        if (mapsPage.reviewDialog.postButton.isExist()){
-            mapsPage.reviewDialog.postButton.shouldBe().text(Matchers.not(text));
         }
     }
 
@@ -135,35 +141,39 @@ public class BaseTest {
 
     @Step
     protected void login(String login, String password) {
-        loginPage.open();
-        loginPage.loginInput.shouldBe().displayed();
         try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            loginPage.open();
+        }catch (Throwable e){
+            initSite(SiteYandex.class);
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            loginPage.open();
         }
-        loginPage.loginInput.clear();
-        loginPage.loginInput.core().click();
-        loginPage.loginInput.input(login);
+
+        loginPage.loginInput.setValue(login);
         loginPage.loginButton.click();
-        loginPage.password.shouldBe().displayed();
-        loginPage.password.input(password);
+        loginPage.password.shouldBe().visible();
+        loginPage.password.setValue(password);
+        String currentUrl = loginPage.driver().getCurrentUrl();
+
         loginPage.loginButton.click();
         loginPage.password.shouldBe().disappear();
 
-        Timer timer = new Timer(2000L);
-        boolean needSkipPhone = timer.wait(() -> {
-            loginPage.phoneSkip.isDisplayed();
-        });
-
-        if (needSkipPhone) {
-            try {
-                loginPage.phoneSkip.click(ElementArea.JS);
-                loginPage.phoneSkip.shouldBe().disappear();
-            } catch (Throwable ignore) {
-
-            }
-
+        if (Timer.waitCondition(()->loginPage.phoneSkip.isDisplayed())) {
+            loginPage.phoneSkip.click();
         }
+
+        Timer urlTimer = new Timer();
+        boolean wait = urlTimer.wait(() -> !WebPage.verifyUrl(currentUrl));
+        Assert.assertTrue(wait, "User was not logged in!");
+        Assert.assertTrue(!WebPage.verifyUrl("/auth/changepassword"), "User account locked! Need to change password");
+        if (Timer.waitCondition(()->loginPage.phoneSkip.isDisplayed())) {
+            loginPage.phoneSkip.click();
+        }
+        Assert.assertTrue(urlTimer.wait(() -> WebPage.verifyUrl("profile")), "User profile page not opened!");
+        loginPage.windowScreenshotToAllure();
     }
 }

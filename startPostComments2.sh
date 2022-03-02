@@ -1,0 +1,1 @@
+mvn test -Dsuite=post -Dthread.count=3 -Ddocker.enabled=False -Dusers.file=users2.csv allure:serve

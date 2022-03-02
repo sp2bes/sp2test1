@@ -6,7 +6,6 @@ import com.epam.jdi.light.elements.pageobjects.annotations.locators.Css;
 import com.epam.jdi.light.ui.html.elements.common.Button;
 import com.epam.jdi.light.ui.html.elements.common.TextField;
 
-@Url("https://passport.yandex.ru/auth")
 public class LoginPage extends WebPage {
     @Css("[name='login']")
     public TextField loginInput;
